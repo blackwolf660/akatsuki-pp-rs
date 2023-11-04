@@ -289,8 +289,8 @@ impl<'m> OsuPP<'m> {
         };
 
         let aim_factor = match self.mods.rx() {
-            true => aim_value.powf(1.185 * nodt_bonus),
-            false => aim_value.powf(1.1),
+            true => aim_value.powf(1.385 * nodt_bonus),
+            false => aim_value.powf(1.3),
         };
 
         let acc_factor = match self.mods.rx() {
