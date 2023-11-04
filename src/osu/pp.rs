@@ -437,10 +437,10 @@ impl OsuPpInner {
         let acc_value = self.compute_accuracy_value();
         let flashlight_value = self.compute_flashlight_value();
 
-        let pp = (aim_value.powf(1.3)
-            + speed_value.powf(1.3)
-            + acc_value.powf(1.3)
-            + flashlight_value.powf(1.3))
+        let pp = (aim_value.powf(1.13)
+            + speed_value.powf(1.08)
+            + acc_value.powf(1.15)
+            + flashlight_value.powf(1.16))
         .powf(1.0 / 1.1)
             * multiplier;
 
