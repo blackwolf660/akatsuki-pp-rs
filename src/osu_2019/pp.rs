@@ -268,9 +268,9 @@ impl<'m> OsuPP<'m> {
             let difficulty = self.attributes.as_ref().unwrap();
             let streams_nerf = ((difficulty.aim_strain / difficulty.speed_strain) * 100.0).round() / 100.0;
 
-            if streams_nerf < 1.09 {
+            if streams_nerf < 1.1 {
                 let acc_factor = (1.0 - self.acc.unwrap()).abs();
-                acc_depression = (0.84 - acc_factor).max(0.5);
+                acc_depression = (0.9 - acc_factor).max(0.5);
 
                 if acc_depression > 0.0 {
                     aim_value *= acc_depression;
@@ -284,29 +284,29 @@ impl<'m> OsuPP<'m> {
         };
 
         let speed_factor = match self.mods.rx() {
-            true => speed_value.powf(0.83 * acc_depression),
-            false => speed_value.powf(1.1),
+            true => speed_value.powf(0.87 * acc_depression),
+            false => speed_value.powf(1.15),
         };
 
         let aim_factor = match self.mods.rx() {
             true => aim_value.powf(1.185 * nodt_bonus),
-            false => aim_value.powf(1.1),
+            false => aim_value.powf(1.15),
         };
 
         let acc_factor = match self.mods.rx() {
             true => acc_value.powf(1.14 * nodt_bonus),
-            false => acc_value.powf(1.1),
+            false => acc_value.powf(1.15),
         };
 
         let mut pp = (aim_factor + speed_factor + acc_factor).powf(1.0 / 1.1) * multiplier;
 
         if self.mods.rx() {
             if self.mods.dt() && self.mods.hr() {
-                pp *= 1.025;
+                pp *= 1.03;
             }
 
             if self.map.creator == "ParkourWizard" {
-                pp *= 0.9;
+                pp *= 0.3;
             }
 
             pp *= match self.map.beatmap_id {
