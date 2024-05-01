@@ -437,10 +437,10 @@ impl OsuPpInner {
         let acc_value = self.compute_accuracy_value();
         let flashlight_value = self.compute_flashlight_value();
 
-        let pp = (aim_value.powf(1.3)
-            + speed_value.powf(1.3)
-            + acc_value.powf(1.3)
-            + flashlight_value.powf(1.3))
+        let pp = (aim_value.powf(1.08)
+            + speed_value.powf(1.08)
+            + acc_value.powf(1.08)
+            + flashlight_value.powf(1.1))
         .powf(1.0 / 1.1)
             * multiplier;
 
@@ -515,7 +515,7 @@ impl OsuPpInner {
 
         aim_value *= self.acc;
         // * It is important to consider accuracy difficulty when scaling with accuracy.
-        aim_value *= 0.98 + self.attrs.od * self.attrs.od / 2500.0;
+        aim_value *= 0.9 + self.attrs.od * self.attrs.od / 2500.0;
 
         aim_value
     }
@@ -530,7 +530,7 @@ impl OsuPpInner {
 
         let total_hits = self.total_hits();
 
-        let len_bonus = 0.95
+        let len_bonus = 0.98
             + 0.4 * (total_hits / 2000.0).min(1.0)
             + (total_hits > 2000.0) as u8 as f64 * (total_hits / 2000.0).log10() * 0.5;
 
@@ -539,7 +539,7 @@ impl OsuPpInner {
         // * Penalize misses by assessing # of misses relative to the total # of objects.
         // * Default a 3% reduction for any # of misses.
         if self.effective_miss_count > 0.0 {
-            speed_value *= 0.97
+            speed_value *= 0.95
                 * (1.0 - (self.effective_miss_count / total_hits).powf(0.775))
                     .powf(self.effective_miss_count.powf(0.875));
         }
@@ -627,11 +627,11 @@ impl OsuPpInner {
 
         // * Increasing the accuracy value by object count for Blinds isn't ideal, so the minimum buff is given.
         if self.mods.hd() {
-            acc_value *= 1.08;
+            acc_value *= 1.07;
         }
 
         if self.mods.fl() {
-            acc_value *= 1.02;
+            acc_value *= 1.08;
         }
 
         acc_value
@@ -648,7 +648,7 @@ impl OsuPpInner {
 
         // * Penalize misses by assessing # of misses relative to the total # of objects. Default a 3% reduction for any # of misses.
         if self.effective_miss_count > 0.0 {
-            flashlight_value *= 0.97
+            flashlight_value *= 0.95
                 * (1.0 - (self.effective_miss_count / total_hits).powf(0.775))
                     .powf(self.effective_miss_count.powf(0.875));
         }
