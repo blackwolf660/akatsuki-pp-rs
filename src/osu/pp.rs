@@ -406,6 +406,10 @@ impl OsuPpInner {
             multiplier *= (1.0 - 0.02 * self.effective_miss_count).max(0.9);
         }
 
+        if self.mods.dt() {
+            multiplier *= 1.13;
+        }
+
         if self.mods.so() && total_hits > 0.0 {
             multiplier *= 1.0 - (self.attrs.n_spinners as f64 / total_hits).powf(0.85);
         }
@@ -437,9 +441,9 @@ impl OsuPpInner {
         let acc_value = self.compute_accuracy_value();
         let flashlight_value = self.compute_flashlight_value();
 
-        let pp = (aim_value.powf(1.08)
-            + speed_value.powf(1.08)
-            + acc_value.powf(1.08)
+        let pp = (aim_value.powf(1.11)
+            + speed_value.powf(1.14)
+            + acc_value.powf(1.11)
             + flashlight_value.powf(1.1))
         .powf(1.0 / 1.1)
             * multiplier;
@@ -464,7 +468,7 @@ impl OsuPpInner {
 
         let total_hits = self.total_hits();
 
-        let len_bonus = 0.95
+        let len_bonus = 1.19
             + 0.4 * (total_hits / 2000.0).min(1.0)
             + (total_hits > 2000.0) as u8 as f64 * (total_hits / 2000.0).log10() * 0.5;
 
@@ -473,7 +477,7 @@ impl OsuPpInner {
         // * Penalize misses by assessing # of misses relative to the total # of objects.
         // * Default a 3% reduction for any # of misses.
         if self.effective_miss_count > 0.0 {
-            aim_value *= 0.97
+            aim_value *= 0.96
                 * (1.0 - (self.effective_miss_count / total_hits).powf(0.775))
                     .powf(self.effective_miss_count);
         }
@@ -495,7 +499,7 @@ impl OsuPpInner {
 
         if self.mods.hd() {
             // * We want to give more reward for lower AR when it comes to aim and HD. This nerfs high AR and buffs lower AR.
-            aim_value *= 1.0 + 0.04 * (12.0 - self.attrs.ar);
+            aim_value *= 1.0 + 0.06 * (12.0 - self.attrs.ar);
         }
 
         // * We assume 15% of sliders in a map are difficult since there's no way to tell from the performance calculator.
@@ -560,7 +564,7 @@ impl OsuPpInner {
         if self.mods.hd() {
             // * We want to give more reward for lower AR when it comes to aim and HD.
             // * This nerfs high AR and buffs lower AR.
-            speed_value *= 1.0 + 0.04 * (12.0 - self.attrs.ar);
+            speed_value *= 1.0 + 0.05 * (12.0 - self.attrs.ar);
         }
 
         // * Calculate accuracy assuming the worst case scenario
@@ -622,16 +626,16 @@ impl OsuPpInner {
 
         // * Bonus for many hitcircles - it's harder to keep good accuracy up for longer.
         acc_value *= (amount_hit_objects_with_acc as f64 / 1000.0)
-            .powf(0.3)
-            .min(1.15);
+            .powf(0.5)
+            .min(1.5);
 
         // * Increasing the accuracy value by object count for Blinds isn't ideal, so the minimum buff is given.
         if self.mods.hd() {
-            acc_value *= 1.07;
+            acc_value *= 1.095;
         }
 
         if self.mods.fl() {
-            acc_value *= 1.08;
+            acc_value *= 1.096;
         }
 
         acc_value
@@ -648,7 +652,7 @@ impl OsuPpInner {
 
         // * Penalize misses by assessing # of misses relative to the total # of objects. Default a 3% reduction for any # of misses.
         if self.effective_miss_count > 0.0 {
-            flashlight_value *= 0.95
+            flashlight_value *= 0.98
                 * (1.0 - (self.effective_miss_count / total_hits).powf(0.775))
                     .powf(self.effective_miss_count.powf(0.875));
         }
